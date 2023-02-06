@@ -1,10 +1,9 @@
 const express = require('express');
 const {getusers}  = require('../Db/issabel')
-const {accion,getstate}= require('../asterisk');
+const {accion,getstate,getcurrentstatus}= require('../asterisk');
 
 const ChanSpy = express.Router();
 
-console.log("ok");
 
 
 ChanSpy.get('/GetExtension', async function(req, res) {
@@ -17,7 +16,7 @@ ChanSpy.get('/GetExtension', async function(req, res) {
   ChanSpy.post('/Spy', async function(req, res) {
     const {Extension,supervisor,type } = req.body
     
-      accion(`SIP/${supervisor}`,`SIP/${Extension}`,type)
+      accion(`${supervisor}`,`${Extension}`,type)
 
     //from-internal
 
@@ -35,6 +34,17 @@ ChanSpy.get('/GetExtension', async function(req, res) {
       res.json({"exten": exten});
    
   });
+
+  ChanSpy.get('/currentstatus', async function(req, res) {
+   
+   const current = await  getcurrentstatus()
+      res.json({"current": current});
+   
+  });
+
+
+
+
 
 
   

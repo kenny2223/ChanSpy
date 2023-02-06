@@ -10,6 +10,7 @@ const app = express();
 const PORT = 2223
 app.use(history());
 app.use(cors());
+app.use(express.json());
 app.use(logger('tiny'))
 const server = require('http').Server(app)
 
@@ -20,9 +21,22 @@ const io = require("socket.io")(server,{
   },});
 
   
+  ami.on('hangup', function(evt) {
+      io.sockets.emit("Hangup", evt);
+  });
+    
+
+    ami.on('blindtransfer', function(evt) {
+      io.sockets.emit("transfer", evt);
+    
+    });
+
+    ami.on('attendedtransfer', function(evt) {
+      io.sockets.emit("transfer", evt);
+    });
+
+
   ami.on('newstate', function(evt) {
-
-
     io.sockets.emit("New_state", evt);
   });
 
@@ -42,13 +56,21 @@ const io = require("socket.io")(server,{
   });
 
 
+app.post('/login',  function(req, res) {
+  const {username,password} = req.body
 
-app.use(express.json());
+    let validation=false;
+    if (username =='admin' && password=="sen31994") validation=true
+
+      res.json({"validation": validation});
+
+  });
+
+
+
 app.use("/ChanSpy",ChanSpy)
 
 app.use(express.static(__dirname + '/public'));
-
-
 
 server.listen(PORT, () =>{
     console.log(`Servidor iniciado en el puerto: ${PORT}`);

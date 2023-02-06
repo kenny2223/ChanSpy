@@ -16,7 +16,7 @@ async function getusers(){
     let  conn;
     try{
    conn = await pool.getConnection();
-    return  await conn.query("SELECT extension,name from  users ORDER BY extension;");
+    return  await conn.query("SELECT user,description,dial from devices ORDER BY id;");
     
   } catch (err) {
       throw err;
